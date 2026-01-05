@@ -1,0 +1,51 @@
+package com.taskmanager.taskmanager.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+// this todoRequestdto iwant responseable for validating and filtring the payload of the TodoRequestDTO
+public class TodoRequestDTO {
+    public String getTitle() {
+        return title;
+    }
+    public TodoRequestDTO() {
+    }
+
+
+    public TodoRequestDTO(String title, String description, Boolean completed) {
+        this.title = title;
+        this.description = description;
+        this.completed = completed;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    @NotBlank(message = "Title is required")
+    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
+    private String title;
+
+    @Size(max = 255, message = "Description must be less than 255 characters")
+    private String description;
+
+    private Boolean completed;
+}
+
