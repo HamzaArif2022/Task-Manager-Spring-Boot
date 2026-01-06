@@ -1,6 +1,8 @@
 package com.taskmanager.taskmanager.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.context.annotation.Primary;
 
 import java.time.LocalDateTime;
@@ -13,6 +15,12 @@ public class Todo  {
         @Column(nullable = false)
          private  String title;
 
+        @Column(nullable = false, updatable = false)
+        private LocalDateTime createdAt;
+
+        private LocalDateTime updatedAt;
+        private LocalDateTime deletedAt;
+
 
 
     public  Todo (String title, boolean completed, String description) {
@@ -24,6 +32,21 @@ public class Todo  {
 
     public Todo() {
 
+    }
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+    @PreRemove
+    public void onDelete() {
+        this.deletedAt = LocalDateTime.now();
     }
 
 

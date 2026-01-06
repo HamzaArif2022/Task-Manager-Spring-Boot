@@ -4,6 +4,10 @@ import com.taskmanager.taskmanager.dto.TodoRequestDTO;
 import com.taskmanager.taskmanager.dto.TodoResponseDTO;
 import com.taskmanager.taskmanager.model.Todo;
 import com.taskmanager.taskmanager.repository.TodoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import  java.util.ArrayList;
@@ -20,11 +24,10 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public List<TodoResponseDTO> getAll() {
-        return todoRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<TodoResponseDTO> getAll(int page, int size,String sortBy) {
+        Pageable pageable  = PageRequest.of(page,size, Sort.by("createdAt").descending()) ;
+        return todoRepository.findAll(pageable).map(this::mapToResponse);
+
         // in here we loop through the items of thetodo and change the type of the response to TodoResponseDTO
     }
 
@@ -42,7 +45,15 @@ public class TodoService {
          Todo saved =todoRepository.save(todo);
          return mapToResponse(saved);// return response of the type of the DTO
     }
+    public List<TodoResponseDTO> searchByTitle(String title){
+        if(title==null ||  title.isEmpty()){
+            throw new IllegalArgumentException("title is null or empty");
+        }
+        return  todoRepository.findByTitleContainingIgnoreCase(title).stream()
+                .map(this::mapToResponse)
+                .toList();
 
+    }
     public TodoResponseDTO update(Long id,TodoRequestDTO todoElement) {
         Todo todo= todoRepository.findById(id).orElseThrow(()-> new RuntimeException("no todo found "));
         todo.setCompleted(todoElement.getCompleted());
