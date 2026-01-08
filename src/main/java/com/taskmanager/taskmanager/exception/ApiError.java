@@ -24,9 +24,7 @@ public class ApiError {
     public ApiError() {
         this.timestamp = LocalDateTime.now();
     }
-    public int getStatus() {
-        return status;
-    }
+
 
     public void setStatus(int status) {
         this.status = status;

@@ -1,5 +1,7 @@
 package com.taskmanager.taskmanager.service;
 
+import static com.taskmanager.taskmanager.specification.TodoSpecification.*;
+
 import com.taskmanager.taskmanager.dto.TodoRequestDTO;
 import com.taskmanager.taskmanager.dto.TodoResponseDTO;
 import com.taskmanager.taskmanager.model.Todo;
@@ -8,8 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import  java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +57,25 @@ public class TodoService {
                 .map(this::mapToResponse)
                 .toList();
 
+    }
+    public Page<TodoResponseDTO> searchTodos(
+            String title,
+            Boolean completed,
+            LocalDateTime from,
+            LocalDateTime to,
+            int page,
+            int size
+    ) {
+        Specification<Todo> spec = Specification
+                .where(hasTitle(title))
+                .and(isCompleted(completed))
+                .and(createdAfter(from))
+                .and(createdBefore(to));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return todoRepository.findAll(spec, pageable)
+                .map(this::mapToResponse);
     }
     public TodoResponseDTO update(Long id,TodoRequestDTO todoElement) {
         Todo todo= todoRepository.findById(id).orElseThrow(()-> new RuntimeException("no todo found "));

@@ -8,10 +8,12 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import com.taskmanager.taskmanager.service.TodoService;
 
 import java.awt.print.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequestMapping("/todos")
@@ -47,9 +49,33 @@ public class TodoController
     }
 
     @GetMapping("/search")
-    public List<TodoResponseDTO> GetTodoById(@RequestParam(defaultValue = "") String title) {
+    public List<TodoResponseDTO> Search(@RequestParam(defaultValue = "") String title) {
         return todoService.searchByTitle(title);
     }
+
+    @GetMapping("/search")
+    public Page<TodoResponseDTO> searchTodos(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fromDate,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime toDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return todoService.searchTodos(
+                title,
+                completed,
+                fromDate,
+                toDate,
+                page,
+                size
+        );
+    }
+
 
     @GetMapping("/{id}")
     public TodoResponseDTO GetTodoById(@PathVariable Long id) {
