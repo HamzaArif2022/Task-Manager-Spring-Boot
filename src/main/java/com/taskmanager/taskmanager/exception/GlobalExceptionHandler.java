@@ -154,6 +154,6 @@ public class GlobalExceptionHandler {
         error.setPath(request.getRequestURI());
         error.setTimestamp(LocalDateTime.now());
 
-        return ResponseEntity.status(status).body(error);
+            return ResponseEntity.status(status).body(error);
     }
 }

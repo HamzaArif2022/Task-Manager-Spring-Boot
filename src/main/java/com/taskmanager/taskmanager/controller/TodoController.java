@@ -4,7 +4,9 @@ import com.taskmanager.taskmanager.dto.TodoRequestDTO;
 import com.taskmanager.taskmanager.dto.TodoResponseDTO;
 import com.taskmanager.taskmanager.model.Todo;
 
+import com.taskmanager.taskmanager.service.SchoolService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,6 +23,8 @@ import java.util.List;
 public class TodoController
 {
     private TodoService todoService ;
+    @Autowired
+    private SchoolService schoolService ;
 
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
@@ -87,5 +91,14 @@ public class TodoController
     public  void deleteTodo(@PathVariable Long id){
          todoService.DeleteByIdTodo(id);
     }
+
+    @PostMapping("/enroll")
+    public String enroll(
+            @RequestParam Long studentId,
+            @RequestParam Long subjectId
+    ){
+        schoolService.enrollStudent(studentId, subjectId);
+        return "Student enrolled!";
+    };
 
 }
